@@ -82,7 +82,7 @@
     <line x1="250" y1="546" x2="1110" y2="546"/>
   </g>
 
-  <!-- lane labels: the swatch is the agent's colour from sssf.config.yaml -->
+  <!-- lane labels: the swatch is the agent's colour from atlas factory.config.yaml -->
   <g font-size="17" fill="#CFD6E0">
     <g class="lane l1"><rect x="62" y="232" width="13" height="13" rx="3" fill="#8B93A1"/><text x="88" y="244">engineer</text></g>
     <g class="lane l2"><rect x="62" y="320" width="13" height="13" rx="3" fill="#8B93A1"/><text x="88" y="332">code</text></g>

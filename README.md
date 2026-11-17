@@ -1,9 +1,9 @@
-# Super Simple Software Factory
+# Atlas Factory
 
 > **Repeatable agents-plus-code workflows, packaged as one skill, stamped into any repo.**
 > Deterministic Python owns the graph. Coding agents are bounded nodes inside it.
 
-📺 Full breakdown on YouTube: **[Super Simple Software Factory](https://youtu.be/haUfb1ievTE)**
+📺 Full breakdown on YouTube: **[Atlas Factory](https://youtu.be/haUfb1ievTE)**
 
 <p align="center">
   <img src="images/00_swimlane_waterfall.svg" alt="A run as swim lanes: engineer, code, planner, builder, and reviewer phases laid on a time axis, each block labelled with its duration, one phase still running and the next still queued" width="850">
@@ -54,7 +54,7 @@ Two steps: get the skill into your repo, then stamp the factory.
 
 ### Agentic Install
 
-Copy `.claude/skills/sssf/` into the target repo and type `/sssf install` inside Claude Code. The skill is named `sssf`, so that is the skill name followed by the `install` argument. There is no bare `/install` command. The agent reads the skill's own `cookbooks/install.md` and does the rest.
+Copy `.claude/skills/atlas-factory/` into the target repo and type `/atlas_factory install` inside Claude Code. The skill is named `atlas_factory`, so that is the skill name followed by the `install` argument. There is no bare `/install` command. The agent reads the skill's own `cookbooks/install.md` and does the rest.
 
 ### Manual Install
 
@@ -63,10 +63,10 @@ Copy `.claude/skills/sssf/` into the target repo and type `/sssf install` inside
 ```bash
 # 1. get the skill into the target repo
 mkdir -p .claude/skills
-cp -r /path/to/super-simple-software-factory/.claude/skills/sssf .claude/skills/
+cp -r /path/to/super-simple-software-factory/.claude/skills/atlas-factory .claude/skills/
 
 # 2. stamp the factory (run from the target repo ROOT, the cwd is where everything lands)
-uv run .claude/skills/sssf/scripts/install.py
+uv run .claude/skills/atlas-factory/scripts/install.py
 cp .env.sample .env                              # then set OPENROUTER_API_KEY
 pi --version                                     # confirm pi is on PATH, or set PI_PATH in .env
 git init && git commit --allow-empty -m init     # chains that end in a commit phase need a repo
@@ -80,13 +80,13 @@ just obs                   # the trace UI, needs bun
 uv run adws/adw_prompt.py "reply with a one-line summary of this repo" --agent scout
 ```
 
-Re-running `install.py` is safe. It skips every file that already exists and reports what it skipped, so a second run doubles as a drift check. `--force` refreshes stamped code to the skill's current version, but it overwrites **all** stamped files including your `sssf.config.yaml` and your prompts, so commit first.
+Re-running `install.py` is safe. It skips every file that already exists and reports what it skipped, so a second run doubles as a drift check. `--force` refreshes stamped code to the skill's current version, but it overwrites **all** stamped files including your `atlas_factory.config.yaml` and your prompts, so commit first.
 
-Green on the smoke test means the whole path works: config validated, session minted, Pi ran, envelope parsed, events landed in `adws/adw_data/sssf.db`. Fix it there before composing anything larger, because every multi-agent chain rides this exact path.
+Green on the smoke test means the whole path works: config validated, session minted, Pi ran, envelope parsed, events landed in `adws/adw_data/atlas_factory.db`. Fix it there before composing anything larger, because every multi-agent chain rides this exact path.
 
 ### Which API keys you actually need
 
-That depends on your roster, not on this repo. Every `model:` in `sssf.config.yaml` is written `provider/model-id`, and the provider half decides the key. Which key pi reads for a given provider comes from `~/.pi/agent/models.json`.
+That depends on your roster, not on this repo. Every `model:` in `atlas_factory.config.yaml` is written `provider/model-id`, and the provider half decides the key. Which key pi reads for a given provider comes from `~/.pi/agent/models.json`.
 
 The starter roster deliberately mixes providers to show the point, so out of the box it wants three:
 
@@ -120,21 +120,21 @@ There are three actors here, and the design keeps them separate on purpose: **th
 ## The skill is the product
 
 <p align="center">
-  <img src="images/03_skill_stamp.svg" alt="The sssf skill directory on the left stamping config, adws, and prompt_engineering into three different target repos" width="780">
+  <img src="images/03_skill_stamp.svg" alt="The atlas_factory skill directory on the left stamping config, adws, and prompt_engineering into three different target repos" width="780">
 </p>
 
-Everything lives in `.claude/skills/sssf/`. `SKILL.md` carries the hard rules and routes each request to one of nine cookbooks. `references/` holds the deep specs, `scripts/` holds the generators, `templates/` holds exactly what gets stamped.
+Everything lives in `.claude/skills/atlas-factory/`. `SKILL.md` carries the hard rules and routes each request to one of nine cookbooks. `references/` holds the deep specs, `scripts/` holds the generators, `templates/` holds exactly what gets stamped.
 
 | What lands in your repo | Where it comes from | Tracked |
 |---|---|---|
-| `adws/adw_sssf_config/sssf.config.yaml` | `templates/sssf.config.yaml` | yes, it is your agent roster |
+| `adws/adw_atlas_factory/atlas_factory.config.yaml` | `templates/atlas_factory.config.yaml` | yes, it is your agent roster |
 | `adws/adw_*.py` | `templates/adws/` | yes, twelve starter workflows |
 | `adws/adw_modules/` | `templates/adws/adw_modules/` | yes, all low-level logic |
 | `adws/adw_data/prompt_engineering/` | `templates/prompt_engineering/` | yes, **your prompts live here** |
 | `adws/adw_data/harness_engineering/` | `templates/harness_engineering/` | yes, pi extensions |
 | `.env.sample` | `templates/env.sample` | yes |
 | `justfile` | `templates/justfile` | yes, starter recipes to run and watch |
-| `adws/adw_data/sessions/`, `sssf.db` | created at runtime | no, gitignored |
+| `adws/adw_data/sessions/`, `atlas_factory.db` | created at runtime | no, gitignored |
 
 The prompts are yours the moment they land. Edit them in `adws/adw_data/prompt_engineering/{agent}/`, never back inside the skill.
 
@@ -144,7 +144,7 @@ There is no DSL here. No framework to learn. It is Python, YAML, agents, and a s
 
 ## The agent roster
 
-`adws/adw_sssf_config/sssf.config.yaml` answers one question per entry: who is this agent. One agent, one prompt, one purpose.
+`adws/adw_atlas_factory/atlas_factory.config.yaml` answers one question per entry: who is this agent. One agent, one prompt, one purpose.
 
 ```yaml
 defaults:
@@ -153,7 +153,7 @@ defaults:
   thinking: medium                 # off | minimal | low | medium | high | xhigh | max
   protected_files:                 # no agent may edit the machinery that grades it
     - adws/adw_modules/
-    - adws/adw_sssf_config/
+    - adws/adw_atlas_factory/
     - adws/adw_*.py
   data_dir: adws/adw_data
 
@@ -204,7 +204,7 @@ with run.phase(PhaseParams(name="plan", kind="agent", owner="planner",
 
 with run.phase(PhaseParams(name="commit", kind="code", owner="git",
                            description="Commit the working tree")) as ph:
-    message = build.commit_message or f"sssf({run.adw_id}): {build.summary}"
+    message = build.commit_message or f"atlas_factory({run.adw_id}): {build.summary}"
     ph.log(sha=git_helper.commit_all(message), message=message)
 
 return run.finish(accepted=review.approved, reason="the reviewer never approved")
@@ -268,15 +268,15 @@ That one cursor query is the entire transport. Live view and full history are th
 
 Files stay the raw record (`raw_output.jsonl`, `envelope.json`, `agent_map.json`). The db is the queryable mirror. Losing it loses nothing you cannot rebuild.
 
-The skill ships a read-only UI for this db at `.claude/skills/sssf/apps/visualizer/`: Vue and Vite served by Bun on port 4600, with sessions, a trace waterfall, and per-phase tool-call detail.
+The skill ships a read-only UI for this db at `.claude/skills/atlas-factory/apps/visualizer/`: Vue and Vite served by Bun on port 4600, with sessions, a trace waterfall, and per-phase tool-call detail.
 
 ```bash
-cd .claude/skills/sssf/apps/visualizer && bun install
-SSSF_DB=/abs/path/to/your-repo/adws/adw_data/sssf.db bun run server/index.ts &
+cd .claude/skills/atlas-factory/apps/visualizer && bun install
+ATLAS_FACTORY_DB=/abs/path/to/your-repo/adws/adw_data/atlas_factory.db bun run server/index.ts &
 bunx vite
 ```
 
-It resolves its target through `--db`, then `SSSF_DB`, then `<cwd>/adws/adw_data/sssf.db`, so one instance can point at any stamped repo. Pass the db explicitly, because the server runs from the app dir.
+It resolves its target through `--db`, then `ATLAS_FACTORY_DB`, then `<cwd>/adws/adw_data/atlas_factory.db`, so one instance can point at any stamped repo. Pass the db explicitly, because the server runs from the app dir.
 
 ---
 
@@ -284,14 +284,14 @@ It resolves its target through `--db`, then `SSSF_DB`, then `<cwd>/adws/adw_data
 
 ```
 super-simple-software-factory/          # the deployable factory, and nothing else
-└── .claude/skills/sssf/
+└── .claude/skills/atlas-factory/
     ├── SKILL.md                        # hard rules + request routing table
     ├── cookbooks/                      # 9 orchestrator playbooks, loaded lazily
     ├── references/                     # config / handoff / observability specs
     ├── scripts/                        # install.py, make_config.py, make_adw.py
     ├── apps/visualizer/                # the read-only trace UI (Vue + Vite on Bun)
     └── templates/                      # EXACTLY what install.py stamps
-        ├── sssf.config.yaml            # the starter roster
+        ├── atlas_factory.config.yaml            # the starter roster
         ├── prompt_engineering/{agent}/ # system.md + user.md per agent
         ├── harness_engineering/        # pi extensions
         └── adws/
@@ -308,7 +308,7 @@ The skill is also what an agent reads to *operate* the factory. `SKILL.md` is th
 Every ADW takes the same shape:
 
 ```bash
-uv run adws/adw_*.py "<prompt or path/to/prompt.md>" [--config adws/adw_sssf_config/sssf.config.yaml] [--adw-id a1b2c3d4]
+uv run adws/adw_*.py "<prompt or path/to/prompt.md>" [--config adws/adw_atlas_factory/atlas_factory.config.yaml] [--adw-id a1b2c3d4]
 ```
 
 | ADW | Chain | Reach for it when |
@@ -338,9 +338,9 @@ uv run adws/adw_build_test.py "implement the plan" --adw-id a1b2c3d4
 Watch a run with the trace db directly:
 
 ```bash
-sqlite3 adws/adw_data/sssf.db "select adw_id, status, substr(request,1,60), total_tokens from sessions order by started_at desc limit 10;"
-sqlite3 adws/adw_data/sssf.db "select seq, name, kind, owner, status from phases where adw_id='a1b2c3d4' order by seq;"
-sqlite3 adws/adw_data/sssf.db "select kind, name, pid, command from processes where adw_id='a1b2c3d4' and ended_at is null;"
+sqlite3 adws/adw_data/atlas_factory.db "select adw_id, status, substr(request,1,60), total_tokens from sessions order by started_at desc limit 10;"
+sqlite3 adws/adw_data/atlas_factory.db "select seq, name, kind, owner, status from phases where adw_id='a1b2c3d4' order by seq;"
+sqlite3 adws/adw_data/atlas_factory.db "select kind, name, pid, command from processes where adw_id='a1b2c3d4' and ended_at is null;"
 ```
 
 Reads never block a running workflow, the db is WAL. `install.py` stamps a `justfile` wrapping all of the above, so in a fresh repo these are `just sessions`, `just phases <adw_id>`, `just tail <adw_id>`, and `just procs <adw_id>`.
@@ -382,7 +382,7 @@ Where to start, roughly in the order that pays off fastest:
 |---|---|---|
 | Your real commands | `adws/adw_modules/quality.py` | The shipped blocks are placeholders that exit 0. Until you wire this, your test phase is theater |
 | Your prompts | `adws/adw_data/prompt_engineering/{agent}/` | Where your standards live: what a good plan looks like, what a review has to catch |
-| Your roster | `adws/adw_sssf_config/sssf.config.yaml` | Models, thinking levels, tools, and what each agent is allowed to write |
+| Your roster | `adws/adw_atlas_factory/atlas_factory.config.yaml` | Models, thinking levels, tools, and what each agent is allowed to write |
 | Your chains | `adws/adw_*.py` | Copy the closest workflow and edit the phase list. They are 40 to 180 lines on purpose |
 | Your definition of done | `adws/adw_modules/gates.py` | A gate is one function. Whatever "done" means where you work, write it here |
 | Your agent capabilities | `adws/adw_data/harness_engineering/` | Pi extensions, a different set per agent if that is what the job needs |
@@ -398,7 +398,7 @@ So take it. Fork it, strip the parts you do not need, rename the agents, throw o
 The [`example` branch](../../tree/example) is this same skill with the factory already stamped in: a populated `adws/`, a `justfile`, a demo app the factory planned, built, tested, reviewed, and documented, and the specs, docs, and traces those runs produced.
 
 ```bash
-git clone <this-repo> sssf && cd sssf
+git clone <this-repo> atlas_factory && cd atlas_factory
 git checkout example
 ```
 
@@ -420,7 +420,7 @@ Vibe coding is not knowing how your system works, and not looking. Agentic engin
 
 Master agentic coding by gaining a deeper understanding of the foundational units of the software factory.
 
-Learn tactical agentic coding patterns with [Tactical Agentic Coding](https://agenticengineer.com/tactical-agentic-coding?y=sssf).
+Learn tactical agentic coding patterns with [Tactical Agentic Coding](https://agenticengineer.com/tactical-agentic-coding?y=atlas_factory).
 
 Follow the [IndyDevDan YouTube channel](https://www.youtube.com/@indydevdan) to improve your agentic coding advantage.
 
